@@ -27,3 +27,13 @@ python3 KeyV/select_frames.py
 /ScanQA_SQA/cdviews/KeyT.py
 ```
 ### 5. **Evaluation**
+```bash
+# Evaluate ScanQA & SQA3D
+cd ./geo/ScanQA_SQA/scripts
+bash eval.sh
+
+# Evaluate VSI-bench
+bash ./geo/vsi_test/scripts
+bash evaluate_vsibench.sh
+
+```
