@@ -1,8 +1,7 @@
 import argparse
 import sys
 import re
-sys.path.insert(0,'/root/dws/3D_QA/geo/scanqa_eval_metrics/llava/eval')
-sys.path.insert(0,'/root/dws/3D_QA/geo/scanqa_eval_metrics/llava/eval')
+sys.path.insert(0,'geo/scanqa_eval_metrics/llava/eval')
 from llava.model.builder import load_pretrained_model
 from llava.mm_utils import get_model_name_from_path, process_images, tokenizer_image_token
 from llava.constants import IMAGE_TOKEN_INDEX, DEFAULT_IMAGE_TOKEN, DEFAULT_IM_START_TOKEN, DEFAULT_IM_END_TOKEN, IGNORE_INDEX
@@ -35,7 +34,7 @@ from tqdm import tqdm
 from qwen_vl_utils import process_vision_info
 import ray
 logging.getLogger().handlers = []
-logs_path = '/root/dws/3D_QA/TStar/logs/'
+logs_path = './TStar/logs/'
 IMAGENET_MEAN = (0.485, 0.456, 0.406)
 IMAGENET_STD = (0.229, 0.224, 0.225)
 def get_llava_video_model(model_id,device):
@@ -73,7 +72,7 @@ def llava_video_predict(model, processor,tokenizer,query, frames=None,**kwargs):
     return ans
 
 def get_internVL_model(model_id,device):
-    sys.path.insert(0,'/root/dws/3D_QA/TStar/cdViews/model')
+
     from InternVL3_8B.modeling_internvl_chat import InternVLChatModel
     from transformers import AutoModel, AutoTokenizer
     device = "cuda:7"
@@ -417,11 +416,11 @@ def get_BLIP2_model(model_id,device):
         from transformers import AutoProcessor,Blip2ForImageTextRetrieval,AutoModel
         print(f"Attempting to load BLIP2 model from: {model_id}")
         model = Blip2ForImageTextRetrieval.from_pretrained(
-            "/root/dws/3D_QA/TStar/cdViews/model/blip2_vit_g",  # Use official model
+            "./TStar/cdViews/model/blip2_vit_g",  # Use official model
             dtype=torch.float16,
             device_map=device
         )
-        processor = AutoProcessor.from_pretrained("/root/dws/3D_QA/TStar/cdViews/model/blip2_vit_g")
+        processor = AutoProcessor.from_pretrained("./TStar/cdViews/model/blip2_vit_g")
         print("Successfully loaded official BLIP2 model")
         return model, processor
     except Exception as e:
@@ -498,11 +497,11 @@ def scanqa_evaluate_EM(pred_data,idx2labels):
 @ray.remote(num_gpus=1)
 def eval_model(args,start,end,gpu_idx):
     frames = None
-    logs_path = '/root/dws/3D_QA/TStar/logs/'
-    sys.path.insert(0,'/root/dws/3D_QA/Spatial-MLLM-master/evaluate')
+    logs_path = './TStar/logs/'
+    sys.path.insert(0,'./Spatial-MLLM-master/evaluate')
     
     
-    sys.path.insert(0,'/root/dws/3D_QA/geo/scanqa_eval_metrics/llava/eval')
+    sys.path.insert(0,'geo/scanqa_eval_metrics/llava/eval')
     from caption_eval.bleu.bleu import Bleu
     from caption_eval.rouge.rouge import Rouge
     from caption_eval.meteor.meteor import Meteor
@@ -551,7 +550,7 @@ def eval_model(args,start,end,gpu_idx):
         from gaussian import key_frames_retrieval_B
 
     if args.dataset == 'ScanQA':
-        with open("/root/dws/3D_QA/TStar/cdViews/data/qa/ScanQA/scanqa_val_llava_style.json") as f:
+        with open("./TStar/cdViews/data/qa/ScanQA/scanqa_val_llava_style.json") as f:
             raw_data = json.load(f)
             idx2labels = {}
             for item in raw_data:
@@ -604,7 +603,7 @@ def eval_model(args,start,end,gpu_idx):
             all_views = [Image.open(scene_path+'/'+view).convert('RGB') for view in all_views_path]
 
             
-            vis_output_dir = f'/root/dws/3D_QA/Spatial-MLLM-master/eval_results/{args.dataset}_blip2_9_{args.method_type}/'
+            vis_output_dir = f'./Spatial-MLLM-master/eval_results/{args.dataset}_blip2_9_{args.method_type}/'
             os.makedirs(vis_output_dir, exist_ok=True)
             vis_output_dir_dir = os.path.join(vis_output_dir, f'{i}_{scene_id}/')
             os.makedirs(vis_output_dir_dir, exist_ok=True)
@@ -718,12 +717,12 @@ def eval_model(args,start,end,gpu_idx):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--model_name", type=str, default="internvl", choices=['llava', 'qwen','llavavideo','llavanext','internvl'])
-    parser.add_argument("--llava_model-path", type=str, default="/root/dws/3D_QA/TStar/cdViews/model/llava-onevision-qwen2-7b-ov-hf")
-    parser.add_argument("--qwen_model-path", type=str, default="/root/dws/MCS/Models/Qwen2.5-VL-7B-Instruct")
-    parser.add_argument("--llava_video_model_path", type=str, default="/root/dws/3D_QA/TStar/cdViews/model/LLaVA-Video-7B-Qwen2")
-    parser.add_argument("--blip_model-path", type=str, default="/root/dws/3D_QA/TStar/cdViews/model/blip2-opt-2_7b")  
-    parser.add_argument("--internvl_model_path", type=str, default="/root/dws/3D_QA/TStar/cdViews/model/InternVL3_8B") 
-    parser.add_argument("--cfg_file", type=str, default="/root/dws/3D_QA/TStar/cdViews/cfgs/QA.yaml")
+    parser.add_argument("--llava_model-path", type=str, default="./TStar/cdViews/model/llava-onevision-qwen2-7b-ov-hf")
+    parser.add_argument("--qwen_model-path", type=str, default="./MCS/Models/Qwen2.5-VL-7B-Instruct")
+    parser.add_argument("--llava_video_model_path", type=str, default="./TStar/cdViews/model/LLaVA-Video-7B-Qwen2")
+    parser.add_argument("--blip_model-path", type=str, default="./TStar/cdViews/model/blip2-opt-2_7b")  
+    parser.add_argument("--internvl_model_path", type=str, default="./TStar/cdViews/model/InternVL3_8B") 
+    parser.add_argument("--cfg_file", type=str, default="./TStar/cdViews/cfgs/QA.yaml")
     parser.add_argument("--method_type", type=str, default="gaussian_2")
     parser.add_argument("--mllm_device", type=str, default="cuda:0")
     parser.add_argument("--blip_device", type=str, default="cuda:0")
@@ -745,26 +744,26 @@ if __name__ == "__main__":
 
     if args.dataset == 'ScanQA' and args.geometry:
         from datasets import load_from_disk
-        geometry_data  = load_from_disk('/root/dws/3D_QA/Depth-Anything_3/outputs/ScanQA_pose_da3_hf')
+        geometry_data  = load_from_disk('./Depth-Anything_3/outputs/ScanQA_pose_da3_hf')
         geometry_data = geometry_data.with_format("numpy")
 
 
 
 
 
-    with open('/root/dws/3D_QA/Spatial-MLLM-master/scores_frames_storage/Scanqa_anchor_index.json',"r", encoding="utf-8") as f:
+    with open('./Spatial-MLLM-master/scores_frames_storage/Scanqa_anchor_index.json',"r", encoding="utf-8") as f:
         topk_indices_storage = json.load(f)
-    # with open('/root/dws/3D_QA/Spatial-MLLM-master/scores_frames_storage/Scanqa_scores.json',"r", encoding="utf-8") as f:
+    # with open('./Spatial-MLLM-master/scores_frames_storage/Scanqa_scores.json',"r", encoding="utf-8") as f:
     #     score_storage = json.load(f)
     if args.sample_strategy == 'aks':
-        with open(f'/root/dws/3D_QA/Spatial-MLLM-master/scores_frames_storage/{args.dataset}_selected_frames_8_d3.json',"r", encoding="utf-8") as f:
+        with open(f'./Spatial-MLLM-master/scores_frames_storage/{args.dataset}_selected_frames_8_d3.json',"r", encoding="utf-8") as f:
             aks_indices= json.load(f)
     elif args.sample_strategy == 'space_aks':
-        # with open(f'/root/dws/3D_QA/FastVGGT-main/outputs/selected_frames/{args.dataset}_fuckthemall_{args.num_frames}.json',"r", encoding="utf-8") as f:、
-        with open('/root/dws/3D_QA/FastVGGT-main/outputs/selected_frames/ScanQA_real_extr_16.json',"r", encoding="utf-8") as f:
+        # with open(f'./FastVGGT-main/outputs/selected_frames/{args.dataset}_fuckthemall_{args.num_frames}.json',"r", encoding="utf-8") as f:、
+        with open('./FastVGGT-main/outputs/selected_frames/ScanQA_real_extr_16.json',"r", encoding="utf-8") as f:
             space_aks_indices= json.load(f)
     elif args.sample_strategy == 'coselect':
-        with open(f'/root/dws/3D_QA/Spatial-MLLM-master/scores_frames_storage/{args.dataset}_selected_frames_coselect8.json',"r", encoding="utf-8") as f:
+        with open(f'./Spatial-MLLM-master/scores_frames_storage/{args.dataset}_selected_frames_coselect8.json',"r", encoding="utf-8") as f:
             coselect_indices= json.load(f)
         
 
@@ -773,7 +772,7 @@ if __name__ == "__main__":
     ray.init(
         num_gpus=n_gpu,
         num_cpus=os.cpu_count(),
-        _temp_dir="/root/dws/3D_QA/ray_temp",
+        _temp_dir="./ray_temp",
         _system_config={"automatic_object_spilling_enabled": False,
                         "metrics_report_interval_ms": 0, },  # 禁止磁盘spill到/tmp
 
@@ -793,7 +792,7 @@ if __name__ == "__main__":
     for pred_data in results:
         all_pred_data.extend(pred_data)
         
-    with open("/root/dws/3D_QA/TStar/cdViews/data/qa/ScanQA/scanqa_val_llava_style.json") as f:
+    with open("./TStar/cdViews/data/qa/ScanQA/scanqa_val_llava_style.json") as f:
         raw_data = json.load(f)
         idx2labels = {}
         for item in raw_data:

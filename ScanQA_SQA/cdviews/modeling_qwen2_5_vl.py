@@ -27,7 +27,7 @@ from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from typing import Any, Callable, Optional, Union
 import sys
-sys.path.insert(0,'/root/dws/3D_QA/geo/ScanQA_SQA/cdviews')
+sys.path.insert(0,'geo/ScanQA_SQA/cdviews')
 from KeyT import floccompress_with_blocks_parallel
 import copy
 import torch

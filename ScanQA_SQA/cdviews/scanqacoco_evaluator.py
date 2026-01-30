@@ -156,7 +156,7 @@ class ScanQAEvaluator:
         return final_metrics
 
     # 配置你的 GT 路径
-GT_PATH = '/root/dws/3D_QA/TStar/cdViews/data/qa/ScanQA/ScanQA_v1.0_val.json'
+GT_PATH = './3D_QA/TStar/cdViews/data/qa/ScanQA/ScanQA_v1.0_val.json'
     
     # 1. 初始化 (只做一次)
 evaluator = ScanQAEvaluator(gt_path=GT_PATH, use_spice=False)

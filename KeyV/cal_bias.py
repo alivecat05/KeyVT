@@ -219,7 +219,7 @@ def get_views_segments_w_bias_v2(frames, lam=0.1):
     return fine_segs
 
 if __name__ == "__main__":
-    file_path = '/root/dws/3D_QA/FastVGGT-main/outputs/pose/ScanQA_pose_refine.json'
+    file_path = './3D_QA/FastVGGT-main/outputs/pose/ScanQA_pose_refine.json'
     extrinsics_list = load_param(file_path)
     segments = []
     novelty = []
@@ -242,9 +242,9 @@ if __name__ == "__main__":
     
     ###  Total calculation time consumption in 10015.77 milliseconds
     
-    # with open('/root/dws/3D_QA/FastVGGT-main/outputs/segs/ScanQA_segs_bias01.json','w') as f:
+    # with open('./3D_QA/FastVGGT-main/outputs/segs/ScanQA_segs_bias01.json','w') as f:
     #     json.dump(segments,f,indent=2)
-    # with open('/root/dws/3D_QA/FastVGGT-main/outputs/segs/scanqa_val_segs_real.json','w') as f:
+    # with open('./3D_QA/FastVGGT-main/outputs/segs/scanqa_val_segs_real.json','w') as f:
     #     json.dump(segments,f,indent=2)
     
 

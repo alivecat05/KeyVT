@@ -54,7 +54,7 @@ OUTPUT_COLUMN_ORDER = [
 
 
 
-# path = '/root/dws/3D_QA/Spatial-MLLM-master/eval_results/eval_vsibench/qwen3b_keyvt/results_qwen3b_keyvt.json'
+# path = './3D_QA/Spatial-MLLM-master/eval_results/eval_vsibench/qwen3b_keyvt/results_qwen3b_keyvt.json'
 
 # root_path = [path.split('/')[i] for i in range(len(path.split('/'))-1)]
 # root_path = '/'.join(root_path) + '/'
@@ -153,4 +153,3 @@ def agg_data(path):
 
 
 
-agg_data('/root/dws/3D_QA/Spatial-MLLM-master/eval_results/eval_vsibench/llavavideo_space_aks_divprune_retain025/results_llavavideo_space_aks_divprune_retain025.json')

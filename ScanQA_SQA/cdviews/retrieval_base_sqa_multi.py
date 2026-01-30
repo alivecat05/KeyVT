@@ -24,11 +24,11 @@ import ray
 IMAGENET_MEAN = (0.485, 0.456, 0.406)
 IMAGENET_STD = (0.229, 0.224, 0.225)
 logging.getLogger().handlers = []
-logs_path = '/root/dws/3D_QA/TStar/logs/'
+logs_path = './3D_QA/TStar/logs/'
 import re
 
 def get_internVL_model(model_id,device):
-    sys.path.insert(0,'/root/dws/3D_QA/TStar/cdViews/model')
+    sys.path.insert(0,'./3D_QA/TStar/cdViews/model')
     from InternVL3_8B.modeling_internvl_chat import InternVLChatModel
     from transformers import AutoModel, AutoTokenizer
     device = "cuda:7"
@@ -328,11 +328,11 @@ def get_BLIP2_model(model_id,device):
     try:
         print(f"Attempting to load BLIP2 model from: {model_id}")
         model = Blip2ForImageTextRetrieval.from_pretrained(
-            "/root/dws/3D_QA/TStar/cdViews/model/blip2_vit_g",  # Use official model
+            "./3D_QA/TStar/cdViews/model/blip2_vit_g",  # Use official model
             dtype=torch.float16,
             device_map=device
         )
-        processor = AutoProcessor.from_pretrained("/root/dws/3D_QA/TStar/cdViews/model/blip2_vit_g")
+        processor = AutoProcessor.from_pretrained("./3D_QA/TStar/cdViews/model/blip2_vit_g")
         print("Successfully loaded official BLIP2 model")
         return model, processor
     except Exception as e:
@@ -421,11 +421,11 @@ def eval_model(args,start,end,idx):
     
     frames = None
     
-    logs_path = '/root/dws/3D_QA/TStar/logs/'
-    sys.path.insert(0,'/root/dws/3D_QA/Spatial-MLLM-master/evaluate')
+    logs_path = './3D_QA/TStar/logs/'
+    sys.path.insert(0,'./3D_QA/Spatial-MLLM-master/evaluate')
     from gaussian import Get_frames_prior_multiview, key_frames_retrieval_B
     from coselect import coselect
-    sys.path.insert(0,'/root/dws/3D_QA/TStar/Video_3D/llava/eval')
+    sys.path.insert(0,'./3D_QA/TStar/Video_3D/llava/eval')
     from caption_eval.bleu.bleu import Bleu
     from caption_eval.rouge.rouge import Rouge
     from caption_eval.meteor.meteor import Meteor
@@ -466,7 +466,7 @@ def eval_model(args,start,end,idx):
 
     
     if args.dataset == 'ScanQA':
-        with open("/root/dws/3D_QA/TStar/cdViews/data/qa/ScanQA/scanqa_val_llava_style.json") as f:
+        with open("./3D_QA/TStar/cdViews/data/qa/ScanQA/scanqa_val_llava_style.json") as f:
             raw_data = json.load(f)
             idx2labels = {}
             for item in raw_data:
@@ -521,7 +521,7 @@ def eval_model(args,start,end,idx):
 
             all_views = [Image.open(scene_path+'/'+view).convert('RGB') for view in all_views_path]
             
-            vis_output_dir = f'/root/dws/3D_QA/Spatial-MLLM-master/eval_results/{args.dataset}_blip2_9_{args.method_type}/'
+            vis_output_dir = f'./3D_QA/Spatial-MLLM-master/eval_results/{args.dataset}_blip2_9_{args.method_type}/'
             os.makedirs(vis_output_dir, exist_ok=True)
             vis_output_dir_dir = os.path.join(vis_output_dir, f'{i}_{scene_id}/')
             os.makedirs(vis_output_dir_dir, exist_ok=True)
@@ -629,11 +629,11 @@ def eval_model(args,start,end,idx):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--model_name", type=str, default="llavavideo", choices=['llava', 'qwen','llavavideo','llavanext'])
-    parser.add_argument("--llava_model-path", type=str, default="/root/dws/3D_QA/TStar/cdViews/model/llava-onevision-qwen2-7b-ov-hf")
-    parser.add_argument("--qwen_model-path", type=str, default="/root/dws/MCS/Models/Qwen2.5-VL-7B-Instruct")
-    parser.add_argument("--llava_video_model_path", type=str, default="/root/dws/3D_QA/TStar/cdViews/model/LLaVA-Video-7B-Qwen2")
-    parser.add_argument("--blip_model-path", type=str, default="/root/dws/3D_QA/TStar/cdViews/model/blip2-opt-2_7b")   
-    parser.add_argument("--cfg_file", type=str, default="/root/dws/3D_QA/TStar/cdViews/cfgs/QA.yaml")
+    parser.add_argument("--llava_model-path", type=str, default="./3D_QA/TStar/cdViews/model/llava-onevision-qwen2-7b-ov-hf")
+    parser.add_argument("--qwen_model-path", type=str, default="./MCS/Models/Qwen2.5-VL-7B-Instruct")
+    parser.add_argument("--llava_video_model_path", type=str, default="./3D_QA/TStar/cdViews/model/LLaVA-Video-7B-Qwen2")
+    parser.add_argument("--blip_model-path", type=str, default="./3D_QA/TStar/cdViews/model/blip2-opt-2_7b")   
+    parser.add_argument("--cfg_file", type=str, default="./3D_QA/TStar/cdViews/cfgs/QA.yaml")
     parser.add_argument("--method_type", type=str, default="gaussian_2")
     parser.add_argument("--mllm_device", type=str, default="cuda:0")
     parser.add_argument("--blip_device", type=str, default="cuda:0")
@@ -657,17 +657,17 @@ if __name__ == "__main__":
     
     if args.dataset == 'SQA' and args.geometry:
         from datasets import load_from_disk
-        geometry_data  = load_from_disk('/root/dws/3D_QA/Depth-Anything_3/outputs/SQA_pose_da3_hf')
+        geometry_data  = load_from_disk('./3D_QA/Depth-Anything_3/outputs/SQA_pose_da3_hf')
         geometry_data = geometry_data.with_format("numpy")
     if args.sample_strategy == 'aks':
-        with open(f'/root/dws/3D_QA/Spatial-MLLM-master/scores_frames_storage/{args.dataset}_selected_frames_8_d3.json',"r", encoding="utf-8") as f:
+        with open(f'./3D_QA/Spatial-MLLM-master/scores_frames_storage/{args.dataset}_selected_frames_8_d3.json',"r", encoding="utf-8") as f:
             aks_indices= json.load(f)
     elif args.sample_strategy == 'space_aks':
-        # with open(f'/root/dws/3D_QA/FastVGGT-main/outputs/selected_frames/{args.dataset}_selected_frames_rest_16.json',"r", encoding="utf-8") as f:
-        with open(f'/root/dws/3D_QA/FastVGGT-main/outputs/selected_frames/SQA_real_extr_16.json',"r", encoding="utf-8") as f:
+        # with open(f'./3D_QA/FastVGGT-main/outputs/selected_frames/{args.dataset}_selected_frames_rest_16.json',"r", encoding="utf-8") as f:
+        with open(f'./3D_QA/FastVGGT-main/outputs/selected_frames/SQA_real_extr_16.json',"r", encoding="utf-8") as f:
             space_aks_indices= json.load(f)
     elif args.sample_strategy == 'coselect':
-        with open(f'/root/dws/3D_QA/Spatial-MLLM-master/scores_frames_storage/{args.dataset}_selected_frames_coselect{args.num_frames}.json',"r", encoding="utf-8") as f:
+        with open(f'./3D_QA/Spatial-MLLM-master/scores_frames_storage/{args.dataset}_selected_frames_coselect{args.num_frames}.json',"r", encoding="utf-8") as f:
             coselect_indices= json.load(f)
     
     
@@ -676,7 +676,7 @@ if __name__ == "__main__":
     ray.init(
         num_gpus=n_gpu,
         num_cpus=os.cpu_count(),
-        _temp_dir="/root/dws/3D_QA/ray_temp",
+        _temp_dir="./3D_QA/ray_temp",
         _system_config={"automatic_object_spilling_enabled": False,
                         "metrics_report_interval_ms": 0, },  # 禁止磁盘spill到/tmp
 

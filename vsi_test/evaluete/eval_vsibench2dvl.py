@@ -4,13 +4,13 @@ import os
 from aggregate_result import agg_data
 os.environ["HF_HUB_OFFLINE"] = "1"
 os.environ['CURL_CA_BUNDLE'] = ''
-sys.path.insert(0,'/root/dws/3D_QA/TStar/cdViews')
+sys.path.insert(0,'./geo/ScanQA_SQA')
 from llava.model.builder import load_pretrained_model
 from llava.mm_utils import get_model_name_from_path, process_images, tokenizer_image_token
 from llava.constants import IMAGE_TOKEN_INDEX, DEFAULT_IMAGE_TOKEN, DEFAULT_IM_START_TOKEN, DEFAULT_IM_END_TOKEN, IGNORE_INDEX
 from llava.conversation import conv_templates, SeparatorStyle
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-sys.path.insert(0, '/root/dws/3D_QA/Spatial-MLLM-master/evaluate')
+sys.path.insert(0, 'geo/vsi_test/evaluete')
 import argparse
 import copy
 import time
@@ -60,66 +60,6 @@ def get_llavanext_video_model(model_id,device):
     processor = LlavaNextVideoProcessor.from_pretrained(model_id)
     processor.patch_size = model.config.vision_config.patch_size
     return model, processor
-# def get_llava_model(model_id,device):
-#     from transformers import AutoProcessor,LlavaOnevisionForConditionalGeneration        
-#     model = LlavaOnevisionForConditionalGeneration.from_pretrained(
-#         model_id, 
-#         torch_dtype=torch.float16, 
-#         device_map=device
-#         # load_in_4bit=True,
-#     ).eval()
-#     # model.to(device)
-#     processor = AutoProcessor.from_pretrained(model_id)
-
-#     return model, processor
-# def llava_predict(model, processor,query, frames=None):
-    
-#     system_prompt = f"""{query}."""
-#     messages = [
-#             {
-#                 "role": "user",
-#                 "content": [
-#                 ],
-#             }
-#         ]
-#     for img in frames: # type: ignore
-#         messages[0]['content'].append(
-#             {"type": "image", "image": img}
-#         )
-#     messages[0]['content'].append(
-#             {"type": "text", "text": system_prompt}
-#     )
-
-#     text_template = processor.apply_chat_template(
-#         messages, tokenize=False, add_generation_prompt=True
-#     )
-    
-#     image_inputs = [item["image"] for item in messages[0]["content"] if item["type"] == "image"]
-    
-    
-#     image_inputs = [img.resize((512,384)) for img in image_inputs]
-    
-    
-#     inputs = processor(images=image_inputs, text=text_template, return_tensors='pt').to(model.device, torch.float16)
-
-#     generated_ids = model.generate(
-#         **inputs,
-#         do_sample=False,          # 确保每次输出相同
-#         # max_new_tokens=20,
-#         pad_token_id=processor.tokenizer.pad_token_id,
-#         eos_token_id=processor.tokenizer.eos_token_id
-#     )
-#     generated_ids_trimmed = [
-#         out_ids[len(in_ids):] for in_ids, out_ids in zip(inputs.input_ids, generated_ids)
-#     ]
-#     output_text = processor.batch_decode(
-#         generated_ids_trimmed, skip_special_tokens=True, clean_up_tokenization_spaces=False
-#     )
-#     ans = output_text[0].strip()
-#     if ans=='television':
-#         ans='tv'
-#     return ans
-
 
 def get_llava_model(model_id,device):
     model_name= 'llava_qwen'
@@ -204,7 +144,7 @@ def llava_video_predict(model, processor,tokenizer,query, frames=None,**kwargs):
     return ans
 
 def get_internVL_model(model_id,device):
-    sys.path.insert(0,'/root/dws/3D_QA/TStar/cdViews/model')
+    sys.path.insert(0,'./3D_QA/TStar/cdViews/model')
     from InternVL3_1b.modeling_internvl_chat import InternVLChatModel
     from transformers import AutoModel, AutoTokenizer
     
@@ -577,7 +517,7 @@ def save_results(output_path: str, results, final_acc):
         idx = len(results)-1
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
         if results[idx]['sample'].get('key_frames') is not None:
-            # save_dir = os.path.join('/root/dws/3D_QA/Spatial-MLLM-master/eval_results/', 'key_frames_gaussian_clip_116/')
+            # save_dir = os.path.join('./3D_QA/Spatial-MLLM-master/eval_results/', 'key_frames_gaussian_clip_116/')
             # save_dir+=str(results[idx]['sample']['problem_id'])+'/'
             # frames = results[idx]['sample']['key_frames']
             # os.makedirs(save_dir, exist_ok=True)
@@ -802,7 +742,7 @@ def main(args):
         model_path=args.model_path,
         model_type=args.model_type,
     )
-    output_dir = os.path.join("/root/dws/3D_QA/Spatial-MLLM-master/eval_results/", f"eval_vsibench/{args.model_type}")
+    output_dir = os.path.join("./eval_results/", f"eval_vsibench/{args.model_type}")
     os.makedirs(output_dir, exist_ok=True)
     vsi_data = load_vsi_evalset()
     n_gpu = torch.cuda.device_count()
@@ -810,7 +750,7 @@ def main(args):
     ray.init(
         num_gpus=n_gpu,
         num_cpus=os.cpu_count(),
-        _temp_dir="/root/dws/3D_QA/ray_temp",
+        _temp_dir="./ray_temp",
         _system_config={"automatic_object_spilling_enabled": False,
                         "metrics_report_interval_ms": 0, },  # 禁止磁盘spill到/tmp
     )
@@ -855,13 +795,13 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Evaluate model on VSIBench dataset.")
     parser.add_argument("--model_name", type=str, default="internvl", choices=['llava', 'qwen','llavavideo','llavanext','internvl'])
-    parser.add_argument("--model_path", type=str,  default='/root/dws/3D_QA/VG-LLM-main/data/model/vgllm-qa-vggt-8b',help="Path to the model.")
-    parser.add_argument("--video_root", type=str,  default='/root/dws/3D_QA/Spatial-MLLM-master/evaluate/annotation/VSIBench',help="Root directory for video files.")
-    parser.add_argument("--llava_model-path", type=str, default="/root/dws/3D_QA/TStar/cdViews/model/llava-onevision-qwen2-7b-ov")
-    parser.add_argument("--internvl_model_path", type=str, default="/root/dws/3D_QA/TStar/cdViews/model/InternVL3_8B")
-    parser.add_argument("--qwen_model_path", type=str, default="/root/dws/MCS/Models/Qwen2.5-VL-7B-Instruct")
-    parser.add_argument("--llava_video_model_path", type=str, default="/root/dws/3D_QA/TStar/cdViews/model/LLaVA-Video-7B-Qwen2")
-    parser.add_argument("--llavanext_video_model_path", type=str, default="/root/dws/3D_QA/TStar/cdViews/model/llava_next_video_7B")
+    parser.add_argument("--model_path", type=str,help="Path to the model.")
+    parser.add_argument("--video_root", type=str, help="Root directory for video files.")
+    parser.add_argument("--llava_model-path", type=str)
+    parser.add_argument("--internvl_model_path", type=str)
+    parser.add_argument("--qwen_model_path", type=str)
+    parser.add_argument("--llava_video_model_path", type=str)
+    parser.add_argument("--llavanext_video_model_path", type=str)
     parser.add_argument("--mllm_device", type=str, default="cuda:0")
     parser.add_argument("--model_type", type=str, default="vgllm_4b_uni", help="Type of the model.")
     parser.add_argument("--batch_size", type=int, default=1, help="Batch size for evaluation.")
@@ -876,12 +816,12 @@ if __name__ == "__main__":
     
     
     if args.sample_strategy == 'space_aks':
-        with open('/root/dws/3D_QA/FastVGGT-main/outputs/selected_frames/vsibench_selected_frames_rest_16_f1_4.json', 'r') as f:
+        with open('./vsibench_selected_frames_rest_16_f1_4.json', 'r') as f:
             aks_index_storage = json.load(f)
     elif args.sample_strategy == 'aks':
-        with open('/root/dws/3D_QA/Spatial-MLLM-master/scores_frames_storage/vsibench_selected_frames_aks_8_d3.json', 'r') as f:
+        with open('./vsibench_selected_frames_aks_8_d3.json', 'r') as f:
             aks_index_storage = json.load(f)
     elif args.sample_strategy == 'coselect':
-        with open('/root/dws/3D_QA/Spatial-MLLM-master/scores_frames_storage/VSIBench_scores_f1_4_8_coselect_B.json', 'r') as f:
+        with open('./VSIBench_scores_f1_4_8_coselect_B.json', 'r') as f:
             aks_index_storage = json.load(f)
     main(args)

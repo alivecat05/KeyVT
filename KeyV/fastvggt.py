@@ -12,7 +12,7 @@ from decord import VideoReader,cpu
 from PIL import Image
 import cv2
 import numpy as np
-sys.path.insert(0,'/root/dws/3D_QA/TStar/cdViews/cdviews')
+sys.path.insert(0,'geo/ScanQA_SQA/cdviews')
 from qa_utils import load_and_update, get_scanqa, get_sqa, custom_collate_fn
 # Ensure project root is in sys.path for absolute imports like `vggt.*`
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
@@ -113,9 +113,9 @@ def get_fastvggt_model(ckpt_path,merging=0,merge_ratio=0.9,vis_attn_map=False):
     return model
 
 def load_vsi_evalset():
-    # file_path = '/root/dws/3D_QA/Spatial-MLLM-master/evaluate'
+    # file_path = './3D_QA/Spatial-MLLM-master/evaluate'
     # vsi_annotation_path = os.path.join(os.path.dirname(file_path), "annotation", "eval_vsibench.json")
-    vsi_annotation_path ='/root/dws/3D_QA/Spatial-MLLM-master/evaluate/annotation/eval_vsibench.json'
+    vsi_annotation_path ='./3D_QA/Spatial-MLLM-master/evaluate/annotation/eval_vsibench.json'
     with open(vsi_annotation_path, "r", encoding="utf-8") as f:
         data = json.load(f)
     return data
@@ -123,7 +123,7 @@ def load_vsi_evalset():
 def load_stibench():
     import pandas as pd
     
-    PARQUET_FILE = "/root/dws/3D_QA/STI-Bench-main/STI-Bench/qa.parquet"
+    PARQUET_FILE = "./3D_QA/STI-Bench-main/STI-Bench/qa.parquet"
     print(f"[Data] Reading {PARQUET_FILE}")
     df_parquet = pd.read_parquet(PARQUET_FILE)    # remove .head(10) for full run
     sti_data = df_parquet.to_dict(orient="records")
@@ -196,7 +196,7 @@ def go(args,start,end,**kwargs):
     vsi_data = kwargs.get('vsi_data', None)
     sti_data = kwargs.get('sti_data', None)
     qa_data = None
-    sys.path.insert(0,'/root/dws/3D_QA/TStar/cdViews/cdviews')
+    sys.path.insert(0,'./3D_QA/TStar/cdViews/cdviews')
     from qa_utils import get_scanqa, get_sqa
     print("Test the view selector... ")
     test_mode = ['val'] if args.dataset == 'ScanQA' else ['test', ]
@@ -239,7 +239,7 @@ def go(args,start,end,**kwargs):
 
             for i,entry in tqdm(enumerate(sti_data[start:end],start=start), total=len(sti_data[start:end])):
                 vid_name, sample_id = entry["file"], entry.get("ID")
-                VIDEO_DIR    = "/root/dws/3D_QA/STI-Bench-main/STI-Bench/video"
+                VIDEO_DIR    = "./3D_QA/STI-Bench-main/STI-Bench/video"
                 print(f"[Run ] {i}/{len(sti_data)}  ({vid_name}, ID={sample_id})")
                 video_path = os.path.join(VIDEO_DIR, vid_name)
                 if not os.path.exists(video_path):
@@ -275,16 +275,16 @@ def parser_func():
     parser.add_argument(
         "--cfg_file", 
         type=str, 
-        default="/root/dws/3D_QA/TStar/cdViews/cfgs/QA.yaml")
+        default="./3D_QA/TStar/cdViews/cfgs/QA.yaml")
     parser.add_argument(
         "--ckpt_path",
         type=str,
-        default="/root/dws/3D_QA/FastVGGT-main/model_tracker_fixed_e20.pt",
+        default="./3D_QA/FastVGGT-main/model_tracker_fixed_e20.pt",
     )
     parser.add_argument(
         "--video_root", 
         type=str,  
-        default='/root/dws/3D_QA/Spatial-MLLM-master/evaluate/annotation/VSIBench',
+        default='./3D_QA/Spatial-MLLM-master/evaluate/annotation/VSIBench',
         help="Root directory for video files.")
     args = parser.parse_args()
     args = load_and_update(args)
@@ -314,7 +314,7 @@ if __name__=='__main__':
     ray.init(
         num_gpus=n_gpu,
         num_cpus=os.cpu_count(),
-        _temp_dir="/root/dws/3D_QA/ray_temp",
+        _temp_dir="./3D_QA/ray_temp",
         _system_config={"automatic_object_spilling_enabled": False,
                         "metrics_report_interval_ms": 0, },  # 禁止磁盘spill到/tmp
     )
@@ -353,6 +353,6 @@ if __name__=='__main__':
     for pred_data in results:
         all_pred_data.extend(pred_data)
     all_pred_data=convert_numpy_types(all_pred_data)
-    with open(f'/root/dws/3D_QA/FastVGGT-main/outputs/{args.dataset}_pose_f1p4.json','w') as f:
+    with open(f'./3D_QA/FastVGGT-main/outputs/{args.dataset}_pose_f1p4.json','w') as f:
         json.dump(all_pred_data, f, indent=4)
 

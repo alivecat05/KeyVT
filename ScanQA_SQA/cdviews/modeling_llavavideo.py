@@ -15,8 +15,8 @@
 
 from abc import ABC, abstractmethod
 import sys
-sys.path.insert(0,'/root/dws/3D_QA/TStar/cdViews/cdviews')
-from floc import floccompress_with_blocks_parallel
+sys.path.insert(0,'geo/ScanQA_SQA/cdviews')
+from KeyT import floccompress_with_blocks_parallel
 import math
 import re
 import time

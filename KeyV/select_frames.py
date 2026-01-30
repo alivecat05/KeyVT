@@ -3,12 +3,12 @@ import os
 import numpy as np
 import torch
 from cal_bias import get_camera_centers,pose_distance
-with open('/root/dws/3D_QA/Spatial-MLLM-master/scores_frames_storage/vital/Scanqa_scores.json','r') as f:
+with open('./3D_QA/Spatial-MLLM-master/scores_frames_storage/vital/Scanqa_scores.json','r') as f:
     scores_dict = json.load(f)
     
-with open('/root/dws/3D_QA/FastVGGT-main/outputs/segs/ScanQA_segs_1.json','r') as f:
+with open('./3D_QA/FastVGGT-main/outputs/segs/ScanQA_segs_1.json','r') as f:
     segs_dict = json.load(f)
-output_path=  '/root/dws/3D_QA/FastVGGT-main/outputs/selected_frames/ScanQA_fuckthemall_16.json'
+output_path=  './3D_QA/FastVGGT-main/outputs/selected_frames/ScanQA_fuckthemall_16.json'
 
 frames_budget = 16
 
@@ -111,5 +111,5 @@ print(f"Total calculation time consumption: {elapsed_time:.2f} milliseconds")
 
 # with open(output_path,'w') as f:
 #     json.dump(output_dict, f, indent=4)
-# with open('/root/dws/3D_QA/FastVGGT-main/outputs/selected_frames/ScanQA_allocations_bias_16.json','w') as f:
+# with open('./3D_QA/FastVGGT-main/outputs/selected_frames/ScanQA_allocations_bias_16.json','w') as f:
 #     json.dump(allocations, f, indent=4)
