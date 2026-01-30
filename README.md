@@ -10,3 +10,4 @@ pip install -e ".[train]"
 ### 3. **Install the other package:**
 ```bash
 pip install easydict flash-attn==2.5.7
+# geo
