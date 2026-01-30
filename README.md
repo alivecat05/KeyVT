@@ -33,7 +33,7 @@ cd ./geo/ScanQA_SQA/scripts
 bash eval.sh
 
 # Evaluate VSI-bench
-bash ./geo/vsi_test/scripts
+cd ./geo/vsi_test/scripts
 bash evaluate_vsibench.sh
 
 ```
