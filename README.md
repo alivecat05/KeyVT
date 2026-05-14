@@ -2,7 +2,7 @@
 
 ![FRAMEWORK](framework_traj-1.png)
 
-
+> Official repository of accepted paper "Zero-Shot 3D Question Answering via Hierarchical View-to-Token Transportation"
 
 ### 1. **Install the inference package:**
 ```bash
