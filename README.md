@@ -1,4 +1,4 @@
-### [ICML2026] Zero-Shot 3D Question Answering via Hierarchical View-to-Token Transportation
+# [ICML2026] Zero-Shot 3D Question Answering via Hierarchical View-to-Token Transportation
 
 ![FRAMEWORK](framework_traj-1.png)
 
