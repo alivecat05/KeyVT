@@ -4,9 +4,9 @@
 
 ## 📅 Timeline & News
 
-- **`Jun 03, 2026`** 📝 Preprint available on arXiv! Check out our paper [here](https://arxiv.org/abs/2606.03100).
-- **`May 01, 2026`** 🎉 **Great News!** Our paper has been officially accepted by [ICML 2026](https://icml.cc/virtual/2026/poster/63796)! 
-- **`Jan 30, 2026`** 🚀 Repository initialized.
+- **`Jun 03, 2026`**  Preprint available on arXiv! Check out our paper [here](https://arxiv.org/abs/2606.03100).
+- **`May 01, 2026`**  **Great News!** Our paper has been officially accepted by [ICML 2026](https://icml.cc/virtual/2026/poster/63796)! 
+- **`Jan 30, 2026`**  Repository initialized.
 
 ---
   
