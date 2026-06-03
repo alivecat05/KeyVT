@@ -1,51 +1,72 @@
 # Zero-Shot 3D Question Answering via Hierarchical View-to-Token Transportation
 
-![FRAMEWORK](framework_traj-1.png)
+---
 
-## 📅 Timeline & News
+![Framework](framework_traj-1.png)
 
-- **`Jun 03, 2026`**  Preprint available on arXiv! Check out our paper [here](https://arxiv.org/abs/2606.03100).
-- **`May 01, 2026`**  **Great News!** Our paper has been officially accepted by [ICML 2026](https://icml.cc/virtual/2026/poster/63796)! 
-- **`Jan 30, 2026`**  Repository initialized.
+## Timeline & News
+
+* **Jun 03, 2026** | Preprint available on [arXiv](https://arxiv.org/abs/2606.03100).
+* **May 01, 2026** | Paper officially accepted by [ICML 2026](https://icml.cc/virtual/2026/poster/63796).
+* **Jan 30, 2026** | Repository initialized.
 
 ---
-  
-### 1. **Install the inference package:**
+
+## Installation
+
+### 1. Environment Setup
+Configure the core environment (compatible with LLaVA):
 ```bash
-# following the project llava
 conda create -n keyvt python=3.10 -y
 conda activate keyvt
 pip install --upgrade pip
 pip install -e ".[train]"
 ```
 
-### 2. **Install the other package:**
+### 2. Dependencies
+Install additional acceleration and configuration packages:
 ```bash
 pip install easydict flash-attn==2.5.7
 ```
 
-### 3. **KeyV Geometry aware view sampling**
+---
+
+## Pipeline Execution
+
+### 3. KeyV: Geometry-Aware View Sampling
+Run the following scripts sequentially to process scene segmentation and view allocation:
 ```bash
-# Get camera parameters
+# Extract camera parameters
 python3 KeyV/fastvggt.py
-# Divide the scene
+
+# Partition the 3D scene
 python3 KeyV/cal_bias.py
+
 # Allocate views for each segment
 python3 KeyV/select_frames.py
 ```
-### 4. **KeyT OT-based key tokens selection**
+
+### 4. KeyT: OT-Based Token Selection
+Execute the Optimal Transport (OT) based token selection module:
 ```bash
-#Go to 
-/ScanQA_SQA/cdviews/KeyT.py
+python3 ScanQA_SQA/cdviews/KeyT.py
 ```
-### 5. **Evaluation**
+
+---
+
+## Evaluation
+
+### 5. Benchmark Evaluation
+Execute the corresponding shell scripts to evaluate performance on target benchmarks.
+
+**ScanQA & SQA3D:**
 ```bash
-# Evaluate ScanQA & SQA3D
 cd ./geo/ScanQA_SQA/scripts
 bash eval.sh
+```
 
-# Evaluate VSI-bench
+**VSI-bench:**
+```bash
 cd ./geo/vsi_test/scripts
 bash evaluate_vsibench.sh
-
 ```
