@@ -1,5 +1,5 @@
 # Zero-Shot 3D Question Answering via Hierarchical View-to-Token Transportation
-
+> [ICML2026]🚀 Official repository for **KEYVT** — a framework for zero-shot 3D question answering with geometry-aware key views sampling and Optimal transport based token selection strategy
 ---
 
 ![Framework](framework_traj-1.png)
